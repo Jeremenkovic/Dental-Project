@@ -1,0 +1,35 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+*.egg
+.venv/
+venv/
+dist/
+build/
+
+# Data (scans, DB — never commit patient data)
+data/
+*.db
+*.db-shm
+*.db-wal
+
+# Node
+node_modules/
+client/dist/
+client/dist-electron/
+
+# Env
+.env
+
+# macOS
+.DS_Store
+
+# Models (too large for git — download via setup.sh)
+*.pth
+*.ckpt
+checkpoints/
+
+# Editor
+.vscode/
+.idea/

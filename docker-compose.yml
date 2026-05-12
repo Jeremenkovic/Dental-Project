@@ -1,0 +1,55 @@
+version: "3.9"
+
+services:
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+
+  backend:
+    build: ./backend
+    ports:
+      - "8000:8000"
+    environment:
+      - REDIS_URL=redis://redis:6379/0
+      - DATABASE_URL=sqlite+aiosqlite:////data/dental.db
+      - STORAGE_PATH=/data/scans
+      - DEMO_MODE=${DEMO_MODE:-false}
+    volumes:
+      - dental_data:/data
+    depends_on:
+      - redis
+
+  worker:
+    build: ./worker
+    environment:
+      - REDIS_URL=redis://redis:6379/0
+      - DATABASE_URL=sqlite:////data/dental.db
+      - STORAGE_PATH=/data/scans
+      - DEMO_MODE=${DEMO_MODE:-false}
+      - GAUSSIAN_SPLATTING_DIR=${GAUSSIAN_SPLATTING_DIR:-/opt/gaussian-splatting}
+      - GS_TRAIN_ITERATIONS=${GS_TRAIN_ITERATIONS:-7000}
+    volumes:
+      - dental_data:/data
+      # Mount GPU model dirs if available:
+      # - /opt/gaussian-splatting:/opt/gaussian-splatting:ro
+    depends_on:
+      - redis
+    # Uncomment for GPU:
+    # deploy:
+    #   resources:
+    #     reservations:
+    #       devices:
+    #         - driver: nvidia
+    #           count: 1
+    #           capabilities: [gpu]
+
+  client:
+    build: ./client
+    ports:
+      - "5173:80"
+    environment:
+      - VITE_API_URL=http://localhost:8000
+
+volumes:
+  dental_data:

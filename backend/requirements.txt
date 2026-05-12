@@ -1,0 +1,8 @@
+fastapi==0.111.0
+uvicorn[standard]==0.29.0
+celery==5.4.0
+redis==5.0.4
+aiosqlite==0.20.0
+sqlalchemy[asyncio]==2.0.30
+aiofiles==23.2.1
+python-multipart==0.0.9
